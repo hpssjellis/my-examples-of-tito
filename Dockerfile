@@ -1,4 +1,4 @@
-# Dockerfile
+# --- Dockerfile ---
 
 # Use a lean official Python image
 FROM python:3.11-slim
@@ -6,19 +6,26 @@ FROM python:3.11-slim
 # Set the working directory in the container
 WORKDIR /app
 
+# Install system dependencies needed for PyTorch and other complex packages
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copy the requirements file and install dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the application code
+# CRITICAL FIX: Use the --extra-index-url flag for CPU-only PyTorch
+# This ensures a faster, smaller, and correct installation.
+RUN pip install --no-cache-dir -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu
+
+# Copy the application code and any necessary TinyTorch files (like your .py assignments)
 COPY . .
 
-# Expose the port (Render will handle mapping to its public IP)
-# The default web service port on Render is often 10000 (set by the $PORT env var)
+# Environment variable for the port (Render injects this)
 ENV PORT 10000 
 EXPOSE ${PORT}
 
-# Command to run the service using Gunicorn (a production Python web server)
-# Use 0.0.0.0 and the $PORT environment variable
-# Assuming the Flask/FastAPI app object is called 'app' inside app.py
-CMD exec gunicorn --bind 0.0.0.0:${PORT} app:app
+# Command to run the service using Gunicorn
+# It binds to 0.0.0.0 on the port set by the hosting environment (${PORT})
+# The format is 'module:app_object'
+CMD ["gunicorn", "--bind", "0.0.0.0:${PORT}", "app:app"]
