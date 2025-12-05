@@ -1,16 +1,6 @@
-# 1. TinyTorch and ML Dependencies
+# requirements.txt content remains the same:
 tinytorch
 numpy
-pytorch # For validation, as mentioned in the original README
-
-# 2. Web Framework (Choose ONE: Flask is simple, FastAPI is modern/faster)
-Flask 
-# OR
-# fastapi
-# uvicorn
-
-# 3. Production Web Server (Used by the Docker CMD)
+pytorch
+Flask # or fastapi
 gunicorn
-
-# 4. Utilities (Optional, but often helpful)
-python-dotenv # Helpful for managing environment variables locally
