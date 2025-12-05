@@ -1,6 +1,15 @@
-# requirements.txt content remains the same:
+# --- requirements.txt ---
+# Core Machine Learning Dependencies
 tinytorch
 numpy
-pytorch
-Flask # or fastapi
+pytorch 
+
+# Web Framework
+Flask
+Jinja2 # Flask dependency
+
+# Production Server
 gunicorn
+
+# Utilities
+python-dotenv
