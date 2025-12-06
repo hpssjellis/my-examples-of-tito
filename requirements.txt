@@ -1,12 +1,11 @@
 # --- requirements.txt ---
 # Core Machine Learning Dependencies
-tinytorch
 numpy
-pytorch 
+torch  # FIXED: Changed from 'pytorch' to 'torch'
 
 # Web Framework
 Flask
-Jinja2 # Flask dependency
+Jinja2
 
 # Production Server
 gunicorn
