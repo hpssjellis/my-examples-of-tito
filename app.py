@@ -212,7 +212,7 @@ API_DOCS_HTML = """
         .workflow h3 { margin-top: 0; color: #667eea; }
         .workflow ol { line-height: 1.8; }
         .endpoint { 
-            background: #f8f9fa;
+            background: #f8f9fa; 
             padding: 25px; 
             margin: 20px 0; 
             border-radius: 10px;
@@ -549,10 +549,14 @@ def execute_tito_command_endpoint():
         cwd = data.get('cwd', str(ASSIGNMENTS_DIR))
         output = execute_tito_command(data['args'], cwd=cwd)
         
+        # FIX: Replace the literal string '\n' (which displays as two characters) 
+        # with the actual newline character '\n' (which creates a line break).
+        myProcessedOutput = output.replace('\\n', '\n')
+        
         return jsonify({
             "status": "success",
             "command": data['args'],
-            "output": output,
+            "output": myProcessedOutput,
             "cwd": cwd,
             "timestamp": datetime.utcnow().isoformat()
         })
