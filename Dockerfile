@@ -1,0 +1,41 @@
+# --- Dockerfile ---
+
+# Use a lean official Python image
+FROM python:3.11-slim
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Install system dependencies needed for PyTorch and git
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy the requirements file and install Python dependencies first
+COPY requirements.txt .
+
+# Install PyTorch and other requirements
+RUN pip install --no-cache-dir -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu
+
+# Clone and install TinyTorch from GitHub
+# Using pip install (not -e) for production deployment
+RUN git clone https://github.com/MLSysBook/TinyTorch.git /tmp/tinytorch && \
+    cd /tmp/tinytorch && \
+    pip install . && \
+    cd /app && \
+    rm -rf /tmp/tinytorch
+
+# Verify tito installation and show Python path
+RUN python -c "import tito; print('TinyTorch installed successfully')" || echo "TinyTorch import failed"
+RUN which tito && tito --help || echo "tito command check"
+
+# Copy the application code
+COPY . .
+
+# Environment variable for the port (Render injects this)
+ENV PORT=10000
+EXPOSE ${PORT}
+
+# Command to run the service using Gunicorn
+CMD gunicorn --bind 0.0.0.0:$PORT app:app
