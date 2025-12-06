@@ -1,0 +1,23 @@
+# --- requirements.txt ---
+
+# Core Machine Learning
+numpy
+torch  # Changed from 'pytorch'
+
+# Notebook Support
+jupyter
+jupyterlab
+notebook
+nbformat
+nbconvert
+ipykernel
+
+# Web Framework
+Flask
+Jinja2
+
+# Production Server
+gunicorn
+
+# Utilities
+python-dotenv
