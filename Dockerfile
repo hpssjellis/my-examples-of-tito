@@ -1,49 +1,47 @@
-# --- Dockerfile with Jupyter Integration ---
+# --- Dockerfile for Notebook API (Option 2) ---
 
+# Use a lean official Python image
 FROM python:3.11-slim
 
+# Set the working directory in the container
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies needed for PyTorch and git
 RUN apt-get update && apt-get install -y \
     build-essential \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements
+# Copy the requirements file and install Python dependencies first
 COPY requirements.txt .
 
-# Install PyTorch and requirements
+# Install PyTorch and other requirements
 RUN pip install --no-cache-dir -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu
 
-# Install Jupyter and related tools
-RUN pip install jupyter jupyterlab notebook nbconvert nbformat
-
-# Clone and install TinyTorch
+# Clone and install TinyTorch from GitHub
 RUN git clone https://github.com/MLSysBook/TinyTorch.git /tmp/tinytorch && \
     cd /tmp/tinytorch && \
     pip install . && \
     cd /app && \
     rm -rf /tmp/tinytorch
 
-# Verify installation
+# Verify tito installation
 RUN python -c "import tito; print('TinyTorch installed successfully')" || echo "TinyTorch import failed"
+RUN which tito && tito --help || echo "tito command check"
 
-# Create directories for notebooks and workspace
-RUN mkdir -p /app/notebooks /app/workspace /app/assignments
+# Verify notebook support
+RUN python -c "import nbformat, nbconvert; print('Notebook support installed')" || echo "Notebook support check failed"
 
-# Copy application code
+# Create workspace directories for notebooks and assignments
+RUN mkdir -p /app/workspace /app/workspace/notebooks /app/workspace/assignments
+
+# Copy the application code
 COPY . .
 
-# Environment variables
+# Environment variable for the port (Render injects this)
 ENV PORT=10000
-ENV JUPYTER_PORT=8888
-ENV PYTHONPATH=/app:$PYTHONPATH
+EXPOSE ${PORT}
 
-EXPOSE ${PORT} ${JUPYTER_PORT}
-
-# Use a startup script to run both Flask and Jupyter
-COPY start.sh /app/start.sh
-RUN chmod +x /app/start.sh
-
-CMD ["/app/start.sh"]
+# Command to run the service using Gunicorn
+# This runs the Flask app with notebook API endpoints
+CMD gunicorn --bind 0.0.0.0:$PORT app:app
