@@ -1,5 +1,3 @@
-# --- app.py ---
-
 import subprocess
 import os
 import logging
@@ -61,311 +59,86 @@ API_DOCS_HTML = """
 <html>
 <head>
     <title>TinyTorch API - Interactive Tester</title>
-    <style>
-        * { box-sizing: border-box; }
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 1200px; 
-            margin: 0 auto; 
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-        }
-        h1 { 
-            color: #667eea; 
-            margin: 0 0 10px 0;
-            font-size: 2.5em;
-        }
-        .subtitle {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 1.1em;
-        }
-        .current-url {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            border-left: 4px solid #667eea;
-        }
-        .current-url strong {
-            color: #667eea;
-        }
-        .current-url code {
-            background: #e9ecef;
-            padding: 4px 8px;
-            border-radius: 4px;
-            color: #495057;
-            font-size: 0.95em;
-        }
-        .info-box {
-            background: #d1ecf1;
-            border: 1px solid #bee5eb;
-            color: #0c5460;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        .endpoint { 
-            background: #f8f9fa;
-            padding: 25px; 
-            margin: 20px 0; 
-            border-radius: 10px;
-            border: 1px solid #dee2e6;
-            transition: all 0.3s ease;
-        }
-        .endpoint:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transform: translateY(-2px);
-        }
-        .endpoint-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .method { 
-            display: inline-block;
-            padding: 6px 12px; 
-            border-radius: 6px; 
-            font-weight: bold;
-            font-size: 0.85em;
-            margin-right: 12px;
-            text-transform: uppercase;
-        }
-        .get { background: #61affe; color: white; }
-        .post { background: #49cc90; color: white; }
-        .endpoint-title {
-            font-size: 1.4em;
-            color: #333;
-            font-weight: 600;
-            margin: 0;
-        }
-        .description {
-            color: #666;
-            margin: 10px 0;
-            line-height: 1.6;
-        }
-        .test-section {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 15px;
-            border: 2px solid #e9ecef;
-        }
-        .test-section h4 {
-            margin: 0 0 15px 0;
-            color: #495057;
-        }
-        .input-group {
-            margin: 15px 0;
-        }
-        .input-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-            color: #495057;
-        }
-        .input-group input, .input-group textarea, .input-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ced4da;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-        .input-group textarea {
-            min-height: 80px;
-            resize: vertical;
-            font-family: monospace;
-        }
-        button { 
-            background: #667eea;
-            color: white; 
-            border: none; 
-            padding: 12px 24px; 
-            border-radius: 6px; 
-            cursor: pointer;
-            font-size: 1em;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            margin-right: 10px;
-            margin-bottom: 10px;
-        }
-        button:hover { 
-            background: #5568d3;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-        }
-        button:active {
-            transform: translateY(0);
-        }
-        button.secondary {
-            background: #6c757d;
-        }
-        button.secondary:hover {
-            background: #5a6268;
-        }
-        .response-box {
-            margin-top: 15px;
-            padding: 15px;
-            background: #2d2d2d;
-            color: #f8f8f2;
-            border-radius: 6px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            max-height: 400px;
-            overflow-y: auto;
-            display: none;
-        }
-        .response-box.show {
-            display: block;
-        }
-        .loading {
-            display: none;
-            color: #667eea;
-            font-style: italic;
-        }
-        .loading.show {
-            display: inline-block;
-        }
-        .command-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 10px;
-            margin: 15px 0;
-        }
-        .command-grid button {
-            margin: 0;
-            font-size: 0.9em;
-            padding: 10px;
-        }
-    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🔥 TinyTorch API Service</h1>
-        <p class="subtitle">Interactive API Testing Interface</p>
-        
-        <div class="current-url">
-            <strong>🌐 Service URL:</strong> <code id="base-url">Loading...</code>
-        </div>
+    <h1>TinyTorch API Service</h1>
+    <p>Interactive API Testing Interface</p>
+    
+    <hr>
+    
+    <p><strong>Service URL:</strong> <span id="base-url">Loading...</span></p>
+    
+    <p><strong>Available tito Commands:</strong><br>
+    setup, system, module, dev, src, package, nbgrader, milestones, community, benchmark, olympics, export, test, grade, logo</p>
 
-        <div class="info-box">
-            <strong>📝 Available tito Commands:</strong><br>
-            setup, system, module, dev, src, package, nbgrader, milestones, community, benchmark, olympics, export, test, grade, logo
-        </div>
+    <hr>
 
-        <!-- Health Check -->
-        <div class="endpoint">
-            <div class="endpoint-header">
-                <span class="method get">GET</span>
-                <h3 class="endpoint-title">/api/v1/health</h3>
-            </div>
-            <p class="description">Check if the service and tito are available.</p>
-            <div class="test-section">
-                <button onclick="testHealth()">🏥 Test Health Check</button>
-                <span class="loading" id="health-loading">Testing...</span>
-                <div class="response-box" id="health-response"></div>
-            </div>
-        </div>
+    <!-- Health Check -->
+    <h2>GET /api/v1/health</h2>
+    <p>Check if the service and tito are available.</p>
+    <button onclick="testHealth()">Test Health Check</button>
+    <span id="health-loading" style="display:none;">Testing...</span>
+    <div id="health-response"></div>
 
-        <!-- Quick Commands -->
-        <div class="endpoint">
-            <div class="endpoint-header">
-                <span class="method post">POST</span>
-                <h3 class="endpoint-title">Quick tito Commands</h3>
-            </div>
-            <p class="description">Test common tito commands with one click.</p>
-            <div class="test-section">
-                <h4>🚀 Quick Test Commands</h4>
-                <div class="command-grid">
-                    <button onclick="quickCommand(['--version'])">Version</button>
-                    <button onclick="quickCommand(['--help'])">Help</button>
-                    <button onclick="quickCommand(['system', 'info'])">System Info</button>
-                    <button onclick="quickCommand(['module', 'list'])">List Modules</button>
-                    <button onclick="quickCommand(['test', '--help'])">Test Help</button>
-                    <button onclick="quickCommand(['grade', '--help'])">Grade Help</button>
-                    <button onclick="quickCommand(['export', '--help'])">Export Help</button>
-                    <button onclick="quickCommand(['logo'])">Show Logo</button>
-                </div>
-                <span class="loading" id="quick-loading">Running...</span>
-                <div class="response-box" id="quick-response"></div>
-            </div>
-        </div>
+    <hr>
 
-        <!-- Module Operations -->
-        <div class="endpoint">
-            <div class="endpoint-header">
-                <span class="method get">GET</span>
-                <span class="method post">POST</span>
-                <h3 class="endpoint-title">/api/v1/module</h3>
-            </div>
-            <p class="description">Work with TinyTorch modules.</p>
-            <div class="test-section">
-                <h4>Module Operations</h4>
-                <div class="input-group">
-                    <label for="module-operation">Operation:</label>
-                    <select id="module-operation">
-                        <option value="list">List Modules</option>
-                        <option value="info">Module Info</option>
-                        <option value="export">Export Module</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label for="module-name">Module Name (e.g., "01_tensor"):</label>
-                    <input type="text" id="module-name" placeholder="01_tensor" value="01_tensor">
-                </div>
-                <button onclick="testModule()">📦 Execute Module Command</button>
-                <span class="loading" id="module-loading">Processing...</span>
-                <div class="response-box" id="module-response"></div>
-            </div>
-        </div>
+    <!-- Quick Commands -->
+    <h2>POST /api/v1/tito/command - Quick Commands</h2>
+    <p>Test common tito commands with one click.</p>
+    <button onclick="quickCommand(['--version'])">Version</button>
+    <button onclick="quickCommand(['--help'])">Help</button>
+    <button onclick="quickCommand(['system', 'info'])">System Info</button>
+    <button onclick="quickCommand(['module', 'list'])">List Modules</button>
+    <button onclick="quickCommand(['test', '--help'])">Test Help</button>
+    <button onclick="quickCommand(['grade', '--help'])">Grade Help</button>
+    <button onclick="quickCommand(['export', '--help'])">Export Help</button>
+    <button onclick="quickCommand(['logo'])">Show Logo</button>
+    <br>
+    <span id="quick-loading" style="display:none;">Running...</span>
+    <div id="quick-response"></div>
 
-        <!-- Grade Operations -->
-        <div class="endpoint">
-            <div class="endpoint-header">
-                <span class="method post">POST</span>
-                <h3 class="endpoint-title">/api/v1/grade</h3>
-            </div>
-            <p class="description">Grade assignments and tests.</p>
-            <div class="test-section">
-                <h4>Grading</h4>
-                <div class="input-group">
-                    <label for="assignment-name">Assignment Name:</label>
-                    <input type="text" id="assignment-name" placeholder="01_tensor" value="01_tensor">
-                </div>
-                <button onclick="testGrade()">✅ Grade Assignment</button>
-                <span class="loading" id="grade-loading">Grading...</span>
-                <div class="response-box" id="grade-response"></div>
-            </div>
-        </div>
+    <hr>
 
-        <!-- Custom Command -->
-        <div class="endpoint">
-            <div class="endpoint-header">
-                <span class="method post">POST</span>
-                <h3 class="endpoint-title">/api/v1/tito/command</h3>
-            </div>
-            <p class="description">Execute custom tito commands.</p>
-            <div class="test-section">
-                <h4>Run Custom Command</h4>
-                <div class="input-group">
-                    <label for="custom-args">Command Arguments (JSON array):</label>
-                    <textarea id="custom-args" placeholder='["system", "info"]'>["system", "info"]</textarea>
-                </div>
-                <button onclick="testCustomCommand()">🚀 Execute Command</button>
-                <span class="loading" id="custom-loading">Running...</span>
-                <div class="response-box" id="custom-response"></div>
-            </div>
-        </div>
-    </div>
+    <!-- Module Operations -->
+    <h2>GET/POST /api/v1/module</h2>
+    <p>Work with TinyTorch modules.</p>
+    <label for="module-operation">Operation:</label>
+    <select id="module-operation">
+        <option value="list">List Modules</option>
+        <option value="info">Module Info</option>
+        <option value="export">Export Module</option>
+    </select>
+    <br><br>
+    <label for="module-name">Module Name (e.g., "01_tensor"):</label>
+    <input type="text" id="module-name" value="01_tensor" size="30">
+    <br><br>
+    <button onclick="testModule()">Execute Module Command</button>
+    <span id="module-loading" style="display:none;">Processing...</span>
+    <div id="module-response"></div>
+
+    <hr>
+
+    <!-- Grade Operations -->
+    <h2>POST /api/v1/grade</h2>
+    <p>Grade assignments and tests.</p>
+    <label for="assignment-name">Assignment Name:</label>
+    <input type="text" id="assignment-name" value="01_tensor" size="30">
+    <br><br>
+    <button onclick="testGrade()">Grade Assignment</button>
+    <span id="grade-loading" style="display:none;">Grading...</span>
+    <div id="grade-response"></div>
+
+    <hr>
+
+    <!-- Custom Command -->
+    <h2>POST /api/v1/tito/command - Custom</h2>
+    <p>Execute custom tito commands.</p>
+    <label for="custom-args">Command Arguments (JSON array):</label><br>
+    <textarea id="custom-args" rows="3" cols="50">["system", "info"]</textarea>
+    <br><br>
+    <button onclick="testCustomCommand()">Execute Command</button>
+    <span id="custom-loading" style="display:none;">Running...</span>
+    <div id="custom-response"></div>
 
     <script>
         const baseUrl = window.location.origin;
@@ -388,18 +161,19 @@ API_DOCS_HTML = """
         }
 
         function showResponse(elementId, result) {
-            const responseBox = document.getElementById(elementId);
-            responseBox.textContent = JSON.stringify(result.data, null, 2);
-            responseBox.classList.add('show');
+            const container = document.getElementById(elementId);
+            const textarea = document.createElement('textarea');
+            textarea.rows = 10;
+            textarea.cols = 80;
+            textarea.value = JSON.stringify(result.data, null, 2);
+            textarea.readOnly = true;
+            container.appendChild(textarea);
+            container.appendChild(document.createElement('br'));
         }
 
         function showLoading(elementId, show = true) {
             const loading = document.getElementById(elementId);
-            if (show) {
-                loading.classList.add('show');
-            } else {
-                loading.classList.remove('show');
-            }
+            loading.style.display = show ? 'inline' : 'none';
         }
 
         async function testHealth() {
