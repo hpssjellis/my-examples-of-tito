@@ -166,7 +166,7 @@ API_DOCS_HTML = """
             textarea.rows = 10;
             textarea.cols = 80;
             
-            // If the response has an 'output' field, show it directly (preserves \n)
+            // If the response has an output field, show it directly preserves 
             // Otherwise show the full JSON
             if (result.data && result.data.output) {
                 textarea.value = result.data.output;
