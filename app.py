@@ -389,7 +389,7 @@ API_DOCS_HTML = """
 
         function showResponse(elementId, result) {
             const responseBox = document.getElementById(elementId);
-            responseBox.textContent = JSON.stringify(result.data, null, '<br>');
+            responseBox.innerHTML = JSON.stringify(result.data, null, '<br>');
             responseBox.classList.add('show');
         }
 
