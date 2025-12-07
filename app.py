@@ -389,7 +389,22 @@ API_DOCS_HTML = """
 
         function showResponse(elementId, result) {
             const responseBox = document.getElementById(elementId);
-            responseBox.textContent = JSON.stringify(result.data, null, 2);
+            
+            // Check if the response has an 'output' field (raw tito command output)
+            if (result.data && result.data.output) {
+                // For raw command output, display it directly without JSON.stringify
+                // to preserve actual line breaks
+                const formattedData = { ...result.data };
+                const output = formattedData.output;
+                delete formattedData.output;
+                
+                // Show the metadata as JSON, then the raw output
+                responseBox.textContent = JSON.stringify(formattedData, null, 2) + '\n\n--- Output ---\n' + output;
+            } else {
+                // For other responses (like health check), use JSON.stringify
+                responseBox.textContent = JSON.stringify(result.data, null, 2);
+            }
+            
             responseBox.classList.add('show');
         }
 
