@@ -85,14 +85,15 @@ API_DOCS_HTML = """
     <!-- Quick Commands -->
     <h2>POST /api/v1/tito/command - Quick Commands</h2>
     <p>Test common tito commands with one click.</p>
-    <button onclick="quickCommand(['--version'])">Version</button>
-    <button onclick="quickCommand(['--help'])">Help</button>
-    <button onclick="quickCommand(['system', 'info'])">System Info</button>
-    <button onclick="quickCommand(['module', 'list'])">List Modules</button>
-    <button onclick="quickCommand(['test', '--help'])">Test Help</button>
-    <button onclick="quickCommand(['grade', '--help'])">Grade Help</button>
-    <button onclick="quickCommand(['export', '--help'])">Export Help</button>
-    <button onclick="quickCommand(['logo'])">Show Logo</button>
+    <button onclick="quickCommand(['--version'])">['--version'] </button>
+    <button onclick="quickCommand(['--help'])">['--help']</button>
+    <button onclick="quickCommand(['system', 'info'])">['system', 'info']</button>
+    <button onclick="quickCommand(['system', 'doctor'])">['system', 'doctor']</button>
+    <button onclick="quickCommand(['module', 'list'])">['module', 'list']</button>
+    <button onclick="quickCommand(['test', '--help'])">['test', '--help']</button>
+    <button onclick="quickCommand(['grade', '--help'])">['grade', '--help']</button>
+    <button onclick="quickCommand(['export', '--help'])">['export', '--help']</button>
+    <button onclick="quickCommand(['logo'])">['logo']</button>
     <br>
     <span id="quick-loading" style="display:none;">Running...</span>
     <div id="quick-response"></div>
