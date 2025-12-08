@@ -1,0 +1,30 @@
+# Core Machine Learning
+numpy>=1.24.0
+torch>=2.0.0  # PyTorch
+
+# TinyTorch specific dependencies
+rich>=13.0.0
+pyyaml>=6.0
+pytest>=7.0.0
+jupytext>=1.14.0
+
+# Notebook Support
+jupyter>=1.0.0
+jupyterlab>=4.0.0
+notebook>=7.0.0
+nbformat>=5.7.0
+nbconvert>=7.0.0
+ipykernel>=6.0.0
+
+# Web Framework
+Flask>=2.3.0
+Jinja2>=3.1.0
+
+# Production Server
+gunicorn>=21.0.0
+
+# Optional but useful for visualization
+matplotlib>=3.7.0
+
+# Utilities
+python-dotenv>=1.0.0
