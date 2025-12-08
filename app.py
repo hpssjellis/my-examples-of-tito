@@ -1,5 +1,6 @@
 import subprocess
 import os
+import sys
 import logging
 from datetime import datetime
 from flask import Flask, request, jsonify, render_template_string
@@ -18,19 +19,74 @@ logger = logging.getLogger(__name__)
 
 logger.info("TinyTorch API Service starting up...")
 
+# --- Find tito executable ---
+def find_tito_executable():
+    """Find the tito executable in various possible locations"""
+    possible_locations = [
+        '/app/venv/bin/tito',
+        '/app/TinyTorch/bin/tito',
+        '/app/TinyTorch/tito',
+        '/app/TinyTorch/cli/tito',
+        '/usr/local/bin/tito',
+    ]
+    
+    # Check which command
+    result = subprocess.run(['which', 'tito'], capture_output=True, text=True)
+    if result.returncode == 0:
+        tito_path = result.stdout.strip()
+        logger.info(f"Found tito via 'which': {tito_path}")
+        return tito_path
+    
+    # Check possible locations
+    for location in possible_locations:
+        if os.path.exists(location) and os.access(location, os.X_OK):
+            logger.info(f"Found tito at: {location}")
+            return location
+    
+    logger.warning("Could not find tito executable in any known location")
+    return None
+
+# Find tito at startup
+TITO_PATH = find_tito_executable()
+
 # --- Utility Function to Handle CLI Output ---
 def execute_tito_command(args):
     """Executes a tito command and returns its stdout output or raises an error."""
+    
+    if TITO_PATH is None:
+        raise RuntimeError("tito executable not found. Check installation.")
+    
     try:
-        command = ['tito'] + args
+        command = [TITO_PATH] + args
         logger.info(f"Executing tito command: {' '.join(command)}")
+        
+        # Set up environment to help Python find modules
+        env = os.environ.copy()
+        
+        # Add TinyTorch to PYTHONPATH if it exists
+        tinytorch_paths = ['/app/TinyTorch', '/app/tinytorch']
+        for path in tinytorch_paths:
+            if os.path.exists(path):
+                current_pythonpath = env.get('PYTHONPATH', '')
+                if current_pythonpath:
+                    env['PYTHONPATH'] = f"{path}:{current_pythonpath}"
+                else:
+                    env['PYTHONPATH'] = path
+                logger.info(f"Added {path} to PYTHONPATH")
+                break
+        
+        # Make sure we're using the venv Python
+        if os.path.exists('/app/venv/bin/python'):
+            env['PYTHON'] = '/app/venv/bin/python'
         
         result = subprocess.run(
             command,
             capture_output=True,
             text=True,
             check=True,
-            timeout=60
+            timeout=60,
+            env=env,
+            cwd='/app/TinyTorch' if os.path.exists('/app/TinyTorch') else '/app'
         )
         
         logger.info(f"Command succeeded. Output length: {len(result.stdout)} chars")
@@ -39,7 +95,14 @@ def execute_tito_command(args):
     except subprocess.CalledProcessError as e:
         error_message = f"tito command failed. STDERR: {e.stderr.strip()}"
         logger.error(error_message)
+        logger.error(f"STDOUT: {e.stdout.strip()}")
         logger.error(f"Exit code: {e.returncode}")
+        
+        # Try to provide helpful debugging info
+        logger.error(f"Command was: {' '.join(command)}")
+        logger.error(f"Working directory: {os.getcwd()}")
+        logger.error(f"PYTHONPATH: {env.get('PYTHONPATH', 'Not set')}")
+        
         raise RuntimeError(error_message) 
     
     except subprocess.TimeoutExpired as e:
@@ -286,46 +349,37 @@ def health_check():
     """Health check endpoint to verify service is running."""
     logger.info("Health check requested")
     
-    tito_available = False
-    tito_module_available = False
-    tito_error = None
+    tito_available = TITO_PATH is not None
+    tito_executable = False
     tito_version = None
+    tito_error = None
     
-    try:
-        # Check if tito command exists
-        result = subprocess.run(['which', 'tito'], capture_output=True, text=True)
-        tito_available = result.returncode == 0
+    if tito_available:
+        tito_executable = os.access(TITO_PATH, os.X_OK)
         
         # Try to get version
-        if tito_available:
-            try:
-                version_result = subprocess.run(
-                    ['tito', '--version'], 
-                    capture_output=True, 
-                    text=True, 
-                    timeout=5
-                )
+        try:
+            version_result = subprocess.run(
+                [TITO_PATH, '--version'], 
+                capture_output=True, 
+                text=True, 
+                timeout=5,
+                env=os.environ.copy()
+            )
+            if version_result.returncode == 0:
                 tito_version = version_result.stdout.strip()
-            except Exception as e:
-                logger.warning(f"Could not get tito version: {e}")
-        
-        # Try to import tito module
-        if tito_available:
-            try:
-                import tito
-                tito_module_available = True
-            except ImportError as e:
-                tito_error = str(e)
-                
-    except Exception as e:
-        logger.warning(f"Could not check tito availability: {e}")
-        tito_error = str(e)
+            else:
+                tito_error = version_result.stderr.strip()
+        except Exception as e:
+            logger.warning(f"Could not get tito version: {e}")
+            tito_error = str(e)
     
     return jsonify({
         "status": "healthy",
         "service": "TinyTorch API",
-        "tito_command_available": tito_available,
-        "tito_module_available": tito_module_available,
+        "tito_path": TITO_PATH,
+        "tito_found": tito_available,
+        "tito_executable": tito_executable,
         "tito_version": tito_version,
         "tito_error": tito_error,
         "available_commands": "setup, system, module, dev, src, package, nbgrader, milestones, community, benchmark, olympics, export, test, grade, logo",
@@ -482,4 +536,5 @@ def internal_error(error):
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     logger.info(f"Starting Flask app on port {port}")
+    logger.info(f"Tito path: {TITO_PATH}")
     app.run(host='0.0.0.0', port=port, debug=True)
