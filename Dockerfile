@@ -67,6 +67,7 @@ WORKDIR /app
 # Create necessary directories
 RUN mkdir -p /app/workspace /app/workspace/notebooks /app/workspace/assignments
 RUN mkdir -p /app/tinytorch /app/tinytorch/core /app/modules
+RUN mkdir -p /tmp/notebooks_upload /tmp/notebooks_processed /tmp/tinytorch_workspace
 
 # Copy application files
 COPY app.py .
