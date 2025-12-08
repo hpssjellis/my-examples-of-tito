@@ -798,4 +798,13 @@ def internal_error(error):
     return jsonify({
         "status": "error",
         "message": "Internal server error. Check logs for details.",
-        "timestamp": datetime.utcnow().iso
+        "timestamp": datetime.utcnow().isoformat()
+    }), 500
+
+
+# --- Local Runner ---
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
+    logger.info(f"Starting Flask app on port {port}")
+    logger.info(f"Tito path: {TITO_PATH}")
+    app.run(host='0.0.0.0', port=port, debug=True)
